@@ -1,6 +1,10 @@
 name: Ament Lint
 
-on: [pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
   ament_lint:
