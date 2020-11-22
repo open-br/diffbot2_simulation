@@ -2,14 +2,14 @@
 #
 # Copyright 2020 Open Rise Robotics
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
+# distributed under the License is distributed on an 'AS IS' BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
@@ -20,11 +20,11 @@ from pathlib import Path
 
 import launch
 from launch import LaunchDescription, LaunchContext
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PythonExpression
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
-from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
 import xacro
 
 
@@ -53,9 +53,9 @@ def generate_launch_description():
         )
     )
 
-    pkg_diffbot2_desc_path_sub = FindPackageShare("diffbot2_description")
-    pkg_diffbot2_simulation_path_sub = FindPackageShare("diffbot2_simulation")
-    pkg_ros_ign_gazebo_path_sub = FindPackageShare("ros_ign_gazebo")
+    pkg_diffbot2_desc_path_sub = FindPackageShare('diffbot2_description')
+    pkg_diffbot2_simulation_path_sub = FindPackageShare('diffbot2_simulation')
+    pkg_ros_ign_gazebo_path_sub = FindPackageShare('ros_ign_gazebo')
     pkg_diffbot2_desc_share_prefix = Path(
         pkg_diffbot2_desc_path_sub.perform(context))
     pkg_ros_ign_gazebo_share_prefix = Path(
@@ -63,15 +63,15 @@ def generate_launch_description():
     pkg_diffbot2_simulation_share_prefix = Path(
         pkg_diffbot2_simulation_path_sub.perform(context))
 
-    should_launch_server_sub = PythonExpression([' \' -s \' ', ' if ',
+    should_launch_server_sub = PythonExpression([" ' -s ' ", ' if ',
                                                 LaunchConfiguration('server_only'), ' else ',
-                                                ' \' \' '])
+                                                " ' ' "])
 
     ign_gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             str(
-                pkg_ros_ign_gazebo_share_prefix / Path("launch") / Path(
-                    "ign_gazebo.launch.py"))),
+                pkg_ros_ign_gazebo_share_prefix / Path('launch') / Path(
+                    'ign_gazebo.launch.py'))),
         launch_arguments={
             'ign_args': ['-r ', should_launch_server_sub, str(
                 pkg_diffbot2_simulation_share_prefix / os.path.join(

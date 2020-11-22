@@ -8,25 +8,18 @@ on:
       - featrue/add-first-simulation
   pull_request:
   workflow_dispatch:
-strategy:
-      matrix:
-        os: [windows-latest]
-        ros_distribution: [dashing, foxy]
 
 jobs:
   build_and_test:
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
     name: build_and_test
-    runs-on: windows-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
       - uses: ros-tooling/setup-ros@0.0.25
-        with:
-            required-ros-distributions: ${{ matrix.ros_distribution }}
       - uses: ros-tooling/action-ros-ci@0.0.19
         with:
-          package-name: 
-            diffbot2_control
-            diffbot2_description
-            diffbot2_robot
-          target-ros2-distro: ${{ matrix.ros_distribution }}
-          vcs-repo-file-url: ""
+          package-name: diffbot2_simulation
+          target-ros2-distro: foxy
+          vcs-repo-file-url: "${{ github.workspace }}/diffbot2.repos"
