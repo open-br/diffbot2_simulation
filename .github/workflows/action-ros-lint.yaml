@@ -8,6 +8,8 @@ on:
 
 jobs:
   ament_lint:
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
     name: ament_lint
     runs-on: ubuntu-20.04
     strategy:
