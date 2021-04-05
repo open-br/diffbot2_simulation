@@ -1,24 +1,26 @@
-name: Colcon build and test
+name: Colcon build and test (Linux)
 
 on: 
   push:
-    branches:
-      - master
-      - main
+    branches: ['main']
   pull_request:
   workflow_dispatch:
 
 jobs:
   build_and_test:
-    env:
-      ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
     name: build_and_test
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - uses: ros-tooling/setup-ros@0.0.25
-      - uses: ros-tooling/action-ros-ci@0.0.19
+      - uses: ros-tooling/setup-ros@0.1.3
+      - uses: ros-tooling/action-ros-ci@v0.2
+        id: action_ros_ci_step
         with:
           package-name: diffbot2_simulation
           target-ros2-distro: foxy
           vcs-repo-file-url: "${{ github.workspace }}/diffbot2.repos"
+      - uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: colcon-logs
+          path: ${{ steps.action_ros_ci_step.outputs.ros-workspace-directory-name }}/build/diffbot2_simulation/test_results/diffbot2_simulation
