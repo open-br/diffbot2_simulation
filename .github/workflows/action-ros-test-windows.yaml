@@ -9,7 +9,7 @@ jobs:
       matrix:
         ros_distribution:
           - foxy
-    name: build_and_test
+    name: build_and_test_windows
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
