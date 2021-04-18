@@ -45,7 +45,7 @@ def generate_launch_description():
         # ign gazebo
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
-                __path([FindPackageShare('ros_ign_gazebo'), 'launch', 'ign_gazebo.launch.py'])
+                _path([FindPackageShare('ros_ign_gazebo'), 'launch', 'ign_gazebo.launch.py'])
             ),
             launch_arguments={
                 'ign_args': [
@@ -54,7 +54,7 @@ def generate_launch_description():
                         '"-s " if "true" == "', LaunchConfiguration('server_only'),
                         '" else ""'
                     ]),
-                    __path([
+                    _path([
                         FindPackageShare('diffbot2_simulation'), 'worlds', 'diffbot2_default.sdf'
                     ])
                 ]
@@ -64,7 +64,7 @@ def generate_launch_description():
         # diffbot2_description
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
-                __path([
+                _path([
                     FindPackageShare('diffbot2_description'), 'launch', 'spawn_robot.launch.py'
                 ])
             ),
@@ -99,7 +99,7 @@ def generate_launch_description():
             executable='create',
             arguments=[
                 '-world', 'default', '-string',
-                __xacro_load([FindPackageShare('diffbot2_description'), 'urdf', 'diffbot2.xacro']),
+                _xacro_load([FindPackageShare('diffbot2_description'), 'urdf', 'diffbot2.xacro']),
                 '-name',
                 LaunchConfiguration('robot_name'), '-allow_renaming', 'true', '-z', '1'
             ],
@@ -108,9 +108,9 @@ def generate_launch_description():
     ])
 
 
-def __path(subst_array):
+def _path(subst_array):
     return PathJoinSubstitution(subst_array)
 
 
-def __xacro_load(xacro_path):
-    return Command(['xacro ', __path(xacro_path)])
+def _xacro_load(xacro_path):
+    return Command(['xacro ', _path(xacro_path)])

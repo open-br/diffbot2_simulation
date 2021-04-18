@@ -119,13 +119,13 @@ class TestSpawnLaunchInterface(unittest.TestCase):
             ('/tf', ['tf2_msgs/msg/TFMessage']),
             ('/tf_static', ['tf2_msgs/msg/TFMessage'])
         ]
-        topics = self.__get_topic_names_and_types(expected, timeout=0.5)
+        topics = self._get_topic_names_and_types(expected, timeout=0.5)
         self.assertIsNotNone(topics)
 
         for expected_topic in expected:
             self.assertIn(expected_topic, topics)
 
-    def __get_topic_names_and_types(self, expected, timeout):
+    def _get_topic_names_and_types(self, expected, timeout):
         """Make sure discovery has found all 'expected' topics."""
         start = time.monotonic()
         while True:
@@ -133,7 +133,9 @@ class TestSpawnLaunchInterface(unittest.TestCase):
             now = time.monotonic()
             if all(expected_topic in topics for expected_topic in expected):
                 return topics
-            elif (now - start) > timeout:
+            elif (now - start) < timeout:
+                continue
+            else:
                 return None
 
     def test_robot_move(self):
@@ -142,30 +144,31 @@ class TestSpawnLaunchInterface(unittest.TestCase):
             self.assertAlmostEqual(current.linear.x, expected.linear.x)
             self.assertAlmostEqual(current.angular.z, expected.angular.z)
 
-        current_vel = self.__wait_for_vel(timeout_sec=5)
+        current_vel = self._wait_for_vel(timeout_sec=5)
         assert_velocity(current_vel, Twist())
 
         vel_cmd = Twist(linear=Vector3(x=0.1))
         self.cmd_vel_pub.publish(vel_cmd)
-        current_vel = self.__wait_for_vel(expected_vel=vel_cmd, timeout_sec=5)
+        current_vel = self._wait_for_vel(expected_vel=vel_cmd, timeout_sec=5)
         assert_velocity(current_vel, vel_cmd)
 
         vel_cmd = Twist(angular=Vector3(z=0.1))
         self.cmd_vel_pub.publish(vel_cmd)
-        current_vel = self.__wait_for_vel(expected_vel=vel_cmd, timeout_sec=10)
+        current_vel = self._wait_for_vel(expected_vel=vel_cmd, timeout_sec=10)
         assert_velocity(current_vel, vel_cmd)
 
         vel_cmd = Twist()
         self.cmd_vel_pub.publish(vel_cmd)
-        current_vel = self.__wait_for_vel(expected_vel=vel_cmd, timeout_sec=5)
+        current_vel = self._wait_for_vel(expected_vel=vel_cmd, timeout_sec=5)
         assert_velocity(current_vel, vel_cmd)
 
-    def __wait_for_vel(self, expected_vel=None, timeout_sec=0):
+    def _wait_for_vel(self, expected_vel=None, timeout_sec=0):
         start = time.monotonic()
         end = start + timeout_sec
         fields = 'twist.twist'
 
-        def get_current_vel():
+        def _get_current_vel():
+            nonlocal fields
             odom_msg = self.sub_tool.await_for_msg('/ns/odometry', timeout_sec)
 
             if odom_msg is None:
@@ -174,11 +177,11 @@ class TestSpawnLaunchInterface(unittest.TestCase):
                 return reduce(getattr, fields.split('.'), odom_msg)
 
         if expected_vel is None:
-            return get_current_vel()
+            return _get_current_vel()
 
         else:
             while True:
-                current_vel = get_current_vel()
+                current_vel = _get_current_vel()
                 if current_vel is None:
                     return None
 
