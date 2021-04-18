@@ -1,5 +1,5 @@
 repositories:
   diffbot2_robot:
     type: git
-    url: https://github.com/open-br/diffbot2_robot
+    url: https://github.com/orise-robotics/diffbot2_robot
     version: main
